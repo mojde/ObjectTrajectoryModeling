@@ -21,6 +21,7 @@ import com.intactile.tools.IntConfig;
 
 public class IntTDB extends IntDataBase {
 
+	private static Dataset dataset = null;
 	private static Logger logger = Logger.getLogger(TDBLoader.class);
 
 	private static IntTDB singloton = null;
@@ -40,60 +41,69 @@ public class IntTDB extends IntDataBase {
 	 */
 	public static void createTDBModel(String directory, List<String> files) {
 
+		if (dataset == null)
+			dataset = TDBFactory.createDataset(directory);
+
+		System.err.println();
+
 		Dataset dataset = TDBFactory.createDataset(directory);
 		Model tdbModel = dataset.getNamedModel("ST_Model");
 
-		dataset.begin(ReadWrite.READ) ;
-		 try {
-			 System.out.println("Liste de l'ontologie de base :");
-			 tdbModel.close();
-		 } finally { dataset.end() ; }
-		
-		
-		
-//		dataset.begin(ReadWrite.READ);
+		dataset.begin(ReadWrite.READ);
+		try {
+			System.out.println("Liste de l'ontologie de base :");
+			tdbModel.close();
+		} finally {
+			dataset.end();
+		}
 
-//		try {
-//			Model tdbModel = dataset.getNamedModel("ST_Model");
-//
-//			System.out.println("Liste de l'ontologie de base :");
-//	
-//			Resource o = tdbModel.createResource("object");
-//			Property p1 = tdbModel.createProperty("has1");
-//			Literal l1 = tdbModel.createLiteral("value1");
-//			
-//			Property p2 = tdbModel.createProperty("has2");
-//			Literal l2 = tdbModel.createLiteral("value2");
-//			
-//			
-//			
-//			tdbModel.add( o , p1, l1);
-//			tdbModel.add( o , p2, l2);
-//			
-//			tdbModel.close();
-//		} finally {
-//			dataset.end();
-//		}
-		
+		// dataset.begin(ReadWrite.READ);
+
+		// try {
+		// Model tdbModel = dataset.getNamedModel("ST_Model");
+		//
+		// System.out.println("Liste de l'ontologie de base :");
+		//
+		// Resource o = tdbModel.createResource("object");
+		// Property p1 = tdbModel.createProperty("has1");
+		// Literal l1 = tdbModel.createLiteral("value1");
+		//
+		// Property p2 = tdbModel.createProperty("has2");
+		// Literal l2 = tdbModel.createLiteral("value2");
+		//
+		//
+		//
+		// tdbModel.add( o , p1, l1);
+		// tdbModel.add( o , p2, l2);
+		//
+		// tdbModel.close();
+		// } finally {
+		// dataset.end();
+		// }
+
 		dataset.end();
-		
+
 	}
 
 	/**
 	 * Model recovery
 	 */
 	public static OntModel getTDBModel(String directory) {
-		Dataset dataset = TDBFactory.createDataset(directory);
-		Model m2 = dataset.getDefaultModel();
-		FileManager.get().readModel(m2, directory);
-		/*
-		 * System.out.println("Liste de l'ontologie :"); Iterator classIter =
-		 * m2.listObjects(); while (classIter.hasNext()) { Object rdfn =
-		 * (Object) classIter.next(); System.out.println(rdfn); }
-		 */
+		if (dataset == null)
+			dataset = TDBFactory.createDataset(directory);
+		
+		dataset.begin(ReadWrite.WRITE);
+		Model m2 = dataset.getNamedModel("ST_Model");
+
 		OntModel mTdb = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM,
 				m2);
+
 		return mTdb;
+	}
+	
+	public static boolean commit(){
+		dataset.commit();
+		return true;
 	}
 
 	@Override
