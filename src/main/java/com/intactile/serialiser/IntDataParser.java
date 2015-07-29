@@ -1,4 +1,4 @@
-package com.intactile.dataParser;
+package com.intactile.serialiser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,6 +10,9 @@ public class IntDataParser {
 
 	String path;
 	String deliminator = "\t";
+
+	public IntDataParser() {
+	}
 
 	public IntDataParser(String filename, String deliminator) {
 		path = filename;

@@ -1,32 +1,32 @@
 package com.intactile.persistance;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.io.FileUtils;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.tdb.TDBLoader;
-import com.hp.hpl.jena.util.FileManager;
 import com.intactile.tools.IntConfig;
 
-public class IntTDB extends IntDataBase {
+/**
+ * 
+ * @author Mojdeh
+ */
+public class IntTDB extends IntDataBase implements IDataBase {
 
 	private static Dataset dataset = null;
-	private static Logger logger = Logger.getLogger(TDBLoader.class);
-
 	private static IntTDB singloton = null;
 
-	private IntTDB() {
+	public IntTDB() {
 	}
 
 	public static IntTDB getTDBInstance() {
@@ -37,77 +37,55 @@ public class IntTDB extends IntDataBase {
 	}
 
 	/**
-	 * Load a Model in TDB TripleStore Read existent Model at first load
+	 * Create a new model, Read existent Model at first load
+	 * @param directory
 	 */
-	public static void createTDBModel(String directory, List<String> files) {
-
+	@Override
+	public void createDBModel() {
 		if (dataset == null)
-			dataset = TDBFactory.createDataset(directory);
-
-		System.err.println();
-
-		Dataset dataset = TDBFactory.createDataset(directory);
-		Model tdbModel = dataset.getNamedModel("ST_Model");
-
-		dataset.begin(ReadWrite.READ);
-		try {
-			System.out.println("Liste de l'ontologie de base :");
-			tdbModel.close();
-		} finally {
-			dataset.end();
-		}
-
-		// dataset.begin(ReadWrite.READ);
-
-		// try {
-		// Model tdbModel = dataset.getNamedModel("ST_Model");
-		//
-		// System.out.println("Liste de l'ontologie de base :");
-		//
-		// Resource o = tdbModel.createResource("object");
-		// Property p1 = tdbModel.createProperty("has1");
-		// Literal l1 = tdbModel.createLiteral("value1");
-		//
-		// Property p2 = tdbModel.createProperty("has2");
-		// Literal l2 = tdbModel.createLiteral("value2");
-		//
-		//
-		//
-		// tdbModel.add( o , p1, l1);
-		// tdbModel.add( o , p2, l2);
-		//
-		// tdbModel.close();
-		// } finally {
-		// dataset.end();
-		// }
-
+			System.out.println("Creating DataBase....");
+			dataset = TDBFactory.createDataset(IntConfig.DIRECTORY);
+		Model tdbModel = dataset.getDefaultModel();
 		dataset.end();
-
 	}
 
 	/**
 	 * Model recovery
 	 */
-	public static OntModel getTDBModel(String directory) {
+	@Override
+	public OntModel getDBModel() {
 		if (dataset == null)
-			dataset = TDBFactory.createDataset(directory);
-		
+			dataset = TDBFactory.createDataset(IntConfig.DIRECTORY);
 		dataset.begin(ReadWrite.WRITE);
-		Model m2 = dataset.getNamedModel("ST_Model");
-
+		Model model = dataset.getDefaultModel();
+		System.out.println("Recovering DataBase....");
 		OntModel mTdb = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM,
-				m2);
-
+				model);
 		return mTdb;
 	}
-	
-	public static boolean commit(){
+
+	@Override
+	public void emptyDBModel() {
+		File fileToRemove = new File(IntConfig.DIRECTORY);
+
+        if (fileToRemove.exists()) {
+        	System.out.println("Doing Empty DataBase....");
+           try {
+                FileUtils.deleteDirectory(fileToRemove);
+            } catch (IOException ex) {
+               Logger.getLogger(IntTDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+	}
+
+	public static boolean commit() {
 		dataset.commit();
 		return true;
 	}
 
 	@Override
 	boolean insertElement(Map<Object, Object> element) {
+
 		return false;
 	}
 

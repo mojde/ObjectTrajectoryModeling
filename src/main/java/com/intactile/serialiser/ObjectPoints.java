@@ -1,4 +1,4 @@
-package com.intactile.dataParser;
+package com.intactile.serialiser;
 
 public class ObjectPoints {
 
@@ -9,6 +9,9 @@ public class ObjectPoints {
 	public String pointDirection;
 	public String pointSpeed;
 	public String pointTime;
+
+	public ObjectPoints() {
+	}
 
 	@Override
 	public String toString() {

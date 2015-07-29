@@ -28,7 +28,6 @@ public class IntConfig {
     }
   }
 
-
   public static void listProperties() {
     for (Entry<Object, Object> entry : props.entrySet()) {
       System.out.println(entry.getKey() + " " + entry.getValue());

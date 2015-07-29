@@ -5,50 +5,45 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.intactile.dataParser.IntDataParser;
-import com.intactile.dataParser.ObjectMobile;
-import com.intactile.persistance.IntTDB;
-import com.intactile.tools.IntConfig;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.intactile.datamodel.CreateSTOntologyFromFile;
+import com.intactile.persistance.IntDataBase;
+import com.intactile.persistance.IntDataBase.PersistanceType;
+import com.intactile.serialiser.IntDataParser;
+import com.intactile.serialiser.ObjectMobile;
 
 public class TrajectoryModelingMain {
+
 	public static void main(String args[]) throws IOException {
+		CreateOntologyFromOntologyFile();
+		//Interogation();
+	}
 
-		List<String> list = Arrays.asList("Travail_maison.csv");
-		// readFiles(list);
-		// IntTDB.createTDBModel(IntConfig.DIRECTORY, list);
+	public static void CreateOntologyFromOntologyFile() {
+		String[] files = { "./resources/STOntologie.owl",
+				"./resources/TOntologie.owl", "./resources/SOntologie.owl" };
+		CreateSTOntologyFromFile
+				.CreateOntologyFromFile("ressources/STOntologie.owl");
+		// CreateOntologyModel.CreateMemOntologyFromFiles(files, "RDF/XML");
+	}
 
-		OntModel model = IntTDB.getTDBModel(IntConfig.DIRECTORY);
+	public static void Interogation(){
+		Model model = null; //createOntologyModel
 
-		System.out.println("Liste de l'ontologie de base :");
-
-		Resource o = model.createResource("object");
-		Property p1 = model.createProperty("has1");
-		Literal l1 = model.createLiteral("value1");
-
-		Property p2 = model.createProperty("has7");
-		Literal l2 = model.createLiteral("value7");
-
-		model.add(o, p1, l1);
-		model.add(o, p2, l2);
-
-		System.err.println(model.size());
-		
-		model.close();
-		
-		IntTDB.commit();
-
-		// IntConfig.listProperties();
-
-		// List<String> list = Arrays.asList("Travail_maison.csv", "Burger.csv",
-		// "Christophe.csv", "Carré du Roi.csv", "Olivier.csv");
-
-		// parseTest();
-		// CreateJenaModel();
-
+		Query query = QueryFactory.create();
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+		try {
+			ResultSet results = qexec.execSelect();
+			ResultSetFormatter.out(System.out, results);
+		} finally {
+			qexec.close();
+		}
 	}
 
 	private static void readFiles(List<String> fileNames) {
@@ -66,5 +61,4 @@ public class TrajectoryModelingMain {
 			}
 		}
 	}
-
 }
