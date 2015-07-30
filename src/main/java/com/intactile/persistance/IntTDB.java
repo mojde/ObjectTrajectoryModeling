@@ -17,6 +17,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import com.hp.hpl.jena.tdb.TDBLoader;
 import com.hp.hpl.jena.util.FileManager;
 import com.intactile.tools.IntConfig;
 
@@ -90,14 +91,14 @@ public class IntTDB extends IntDataBase {
 
 	@Override
 	public boolean insertElement() {
+		
+		OntModel modelClone = getDBModel();
 		/**
 		 * Load Model from given file
 		 * 
 		 * @param filename
 		 */
-		Model modelOrigin = FileManager.get()
-				.loadModel(IntConfig.ONTOLOGY_FILE);
-		OntModel modelClone = getDBModel();
+		Model modelOrigin = FileManager.get().readModel(modelClone,IntConfig.ONTOLOGY_FILE);
 		StmtIterator stmts = modelOrigin.listStatements();
 		while (stmts.hasNext()) {
 			Statement stmt = stmts.next();
@@ -106,7 +107,7 @@ public class IntTDB extends IntDataBase {
 			// put the statement of model input in persistence model output
 			modelClone.add(stmt);
 		}
-		// System.err.println(modelClone.listClasses().toList().size());
+		 System.err.println(modelClone.listClasses().toList().size());
 		modelClone.close();
 
 		return true;
