@@ -6,7 +6,7 @@ import java.util.Map;
 *
 * @author Mojdeh
 */
-public abstract class IntDataBase {
+public abstract class IntDataBase implements IDataBase {
 
 	/** unique Instance non preinitialize */
 	private static IntDataBase singlotonDB = null;
@@ -27,6 +27,6 @@ public abstract class IntDataBase {
 	}
 
 	/** Inserts a point for an object */
-	abstract boolean insertElement(Map<Object, Object> element);
+	public abstract boolean insertElement();
 
 }

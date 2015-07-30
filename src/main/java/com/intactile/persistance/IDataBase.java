@@ -21,5 +21,10 @@ public interface IDataBase {
      * Delete tables
      */
     void emptyDBModel();
+    
+    /**
+     * Insert Data
+     */
+    abstract boolean insertElement();
 
 }

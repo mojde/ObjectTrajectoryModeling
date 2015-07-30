@@ -14,14 +14,17 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import com.hp.hpl.jena.util.FileManager;
 import com.intactile.tools.IntConfig;
 
 /**
  * 
  * @author Mojdeh
  */
-public class IntTDB extends IntDataBase implements IDataBase {
+public class IntTDB extends IntDataBase {
 
 	private static Dataset dataset = null;
 	private static IntTDB singloton = null;
@@ -38,13 +41,14 @@ public class IntTDB extends IntDataBase implements IDataBase {
 
 	/**
 	 * Create a new model, Read existent Model at first load
+	 * 
 	 * @param directory
 	 */
 	@Override
 	public void createDBModel() {
 		if (dataset == null)
 			System.out.println("Creating DataBase....");
-			dataset = TDBFactory.createDataset(IntConfig.DIRECTORY);
+		dataset = TDBFactory.createDataset(IntConfig.DIRECTORY);
 		Model tdbModel = dataset.getDefaultModel();
 		dataset.end();
 	}
@@ -68,14 +72,15 @@ public class IntTDB extends IntDataBase implements IDataBase {
 	public void emptyDBModel() {
 		File fileToRemove = new File(IntConfig.DIRECTORY);
 
-        if (fileToRemove.exists()) {
-        	System.out.println("Doing Empty DataBase....");
-           try {
-                FileUtils.deleteDirectory(fileToRemove);
-            } catch (IOException ex) {
-               Logger.getLogger(IntTDB.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+		if (fileToRemove.exists()) {
+			System.out.println("Doing Empty DataBase....");
+			try {
+				FileUtils.deleteDirectory(fileToRemove);
+			} catch (IOException ex) {
+				Logger.getLogger(IntTDB.class.getName()).log(Level.SEVERE,
+						null, ex);
+			}
+		}
 	}
 
 	public static boolean commit() {
@@ -84,9 +89,26 @@ public class IntTDB extends IntDataBase implements IDataBase {
 	}
 
 	@Override
-	boolean insertElement(Map<Object, Object> element) {
+	public boolean insertElement() {
+		/**
+		 * Load Model from given file
+		 * 
+		 * @param filename
+		 */
+		Model modelOrigin = FileManager.get()
+				.loadModel(IntConfig.ONTOLOGY_FILE);
+		OntModel modelClone = getDBModel();
+		StmtIterator stmts = modelOrigin.listStatements();
+		while (stmts.hasNext()) {
+			Statement stmt = stmts.next();
+			System.out.println(stmt.toString());
 
-		return false;
+			// put the statement of model input in persistence model output
+			modelClone.add(stmt);
+		}
+		// System.err.println(modelClone.listClasses().toList().size());
+		modelClone.close();
+
+		return true;
 	}
-
 }

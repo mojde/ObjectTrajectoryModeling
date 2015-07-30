@@ -1,7 +1,6 @@
 package com.intactile.mainLuncher;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,9 +11,8 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.intactile.datamodel.CreateSTOntologyFromFile;
+import com.intactile.persistance.IDataBase;
 import com.intactile.persistance.IntDataBase;
-import com.intactile.persistance.IntDataBase.PersistanceType;
 import com.intactile.serialiser.IntDataParser;
 import com.intactile.serialiser.ObjectMobile;
 
@@ -22,19 +20,17 @@ public class TrajectoryModelingMain {
 
 	public static void main(String args[]) throws IOException {
 		CreateOntologyFromOntologyFile();
-		//Interogation();
+		// Interogation();
 	}
 
 	public static void CreateOntologyFromOntologyFile() {
-		String[] files = { "./resources/STOntologie.owl",
-				"./resources/TOntologie.owl", "./resources/SOntologie.owl" };
-		CreateSTOntologyFromFile
-				.CreateOntologyFromFile("ressources/STOntologie.owl");
-		// CreateOntologyModel.CreateMemOntologyFromFiles(files, "RDF/XML");
+		IDataBase persistance = IntDataBase
+				.getDBInstance(IntDataBase.PersistanceType.TDB);
+		persistance.insertElement();
 	}
 
-	public static void Interogation(){
-		Model model = null; //createOntologyModel
+	public static void Interogation() {
+		Model model = null; // createOntologyModel
 
 		Query query = QueryFactory.create();
 		QueryExecution qexec = QueryExecutionFactory.create(query, model);
