@@ -6,8 +6,12 @@ import java.util.Iterator;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
-import com.intactile.persistance.IntDataBase;
+import com.intactile.persistance.IntPersistanceFactory;
 
+/**
+ * 
+ * @author Mojdeh
+ */
 public class IntSTModel {
 
 	static IntSTModel singleton = null;
@@ -19,6 +23,7 @@ public class IntSTModel {
 	private String ns_temporal = "http://www.w3.org/2006/time#";
 
 	// myclasses
+	private OntClass spatioTemporalObject;
 	private OntClass spaceTimePoint;
 	private OntClass spaceTimeSegment;
 	private OntClass trajectory;
@@ -54,8 +59,8 @@ public class IntSTModel {
 	 */
 	private void initSTModel() {
 		System.out.println("Model init ...");
-		model = IntDataBase.getDBInstance(IntDataBase.PersistanceType.TDB)
-				.getDBModel();
+		model = IntPersistanceFactory.getDBInstance(
+				IntPersistanceFactory.PersistanceType.TDB).getDBModel();
 
 		System.out.println("Model Parse Classes");
 		Iterator<OntClass> modelClasses = model.listClasses();
@@ -74,6 +79,9 @@ public class IntSTModel {
 					}
 
 					switch (type) {
+					case SpatioTemporalObject:
+						spatioTemporalObject = c;
+						break;
 					case SpaceTimePoint:
 						spaceTimePoint = c;
 						break;
@@ -109,7 +117,7 @@ public class IntSTModel {
 					default:
 						break;
 					}
-					// System.err.println(c.getLocalName());
+					System.err.println(c.getLocalName());
 					// Iterator<OntProperty> pso = c.listDeclaredProperties();
 					// while (pso.hasNext()) {
 					// OntProperty p = pso.next();
@@ -123,8 +131,11 @@ public class IntSTModel {
 
 	}
 
-	public OntClass getSTOntClass(IntModelConcepts type) {
-		switch (type) {
+	public OntClass getSTOntClass(IntModelConcepts classeName) {
+		switch (classeName) {
+		case SpatioTemporalObject:
+			return spatioTemporalObject;
+			
 		case SpaceTimePoint:
 			return spaceTimePoint;
 
@@ -134,14 +145,14 @@ public class IntSTModel {
 		case Trajectory:
 			return trajectory;
 
+		case MovingObject:
+			return movingObject;
+
 		case Port:
 			return port;
 
 		case Way:
 			return way;
-
-		case MovingObject:
-			return movingObject;
 
 		case Feature:
 			return feature;

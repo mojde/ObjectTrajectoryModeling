@@ -23,7 +23,7 @@ import com.intactile.tools.IntConfig;
  * 
  * @author Mojdeh
  */
-public class IntTDB extends IntDataBase {
+public class IntTDB extends IntPersistanceFactory {
 
 	private static Dataset dataset = null;
 	private static IntTDB singloton = null;
@@ -61,7 +61,6 @@ public class IntTDB extends IntDataBase {
 			dataset = TDBFactory.createDataset(IntConfig.DIRECTORY);
 		dataset.begin(ReadWrite.WRITE);
 		Model model = dataset.getDefaultModel();
-		System.out.println("Recovering DataBase....");
 		OntModel mTdb = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM,
 				model);
 		return mTdb;
@@ -69,8 +68,8 @@ public class IntTDB extends IntDataBase {
 
 	@Override
 	public void emptyDBModel() {
-		File fileToRemove = new File(IntConfig.DIRECTORY);
 
+		File fileToRemove = new File(IntConfig.DIRECTORY);
 		if (fileToRemove.exists()) {
 			System.out.println("Doing Empty DataBase....");
 			try {
@@ -88,26 +87,24 @@ public class IntTDB extends IntDataBase {
 	}
 
 	@Override
-	public boolean insertElement() {
+	public boolean insertElementIntoDB() {
 
-		OntModel modelClone = getDBModel();
+		OntModel initModelTDB = getDBModel();
 		/**
 		 * Load Model from given file
 		 * 
 		 * @param filename
 		 */
-		Model modelOrigin = FileManager.get().readModel(modelClone,
+		Model modelFromFile = FileManager.get().readModel(initModelTDB,
 				IntConfig.ONTOLOGY_FILE);
-		List<Statement> stmts = modelOrigin.listStatements().toList();
-
+		List<Statement> stmts = modelFromFile.listStatements().toList();
 		for (Statement stmt : stmts) {
 			System.out.println(stmt.toString());
-
 			// put the statement of model input in persistence model output
-			modelClone.add(stmt);
+			initModelTDB.add(stmt);
 		}
-		System.err.println(modelClone.listClasses().toList().size());
-		modelClone.close();
+		System.err.println(initModelTDB.listClasses().toList().size());
+		initModelTDB.close();
 
 		return true;
 	}

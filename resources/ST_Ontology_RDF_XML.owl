@@ -72,15 +72,6 @@
     
 
 
-    <!-- http://www.intactile.com/ontologies/2015/7/myST_Ontology#hasGeometry -->
-
-    <ObjectProperty rdf:about="http://www.intactile.com/ontologies/2015/7/myST_Ontology#hasGeometry">
-        <rdfs:domain rdf:resource="http://www.intactile.com/ontologies/2015/7/myST_Ontology#SpatioTemporalObject"/>
-        <rdfs:range rdf:resource="http://www.opengis.net/ont/geosparql#SpatialObject"/>
-    </ObjectProperty>
-    
-
-
     <!-- http://www.intactile.com/ontologies/2015/7/myST_Ontology#hasIntervalTime -->
 
     <ObjectProperty rdf:about="http://www.intactile.com/ontologies/2015/7/myST_Ontology#hasIntervalTime">
@@ -113,6 +104,26 @@
     <ObjectProperty rdf:about="http://www.intactile.com/ontologies/2015/7/myST_Ontology#hasTraversedBy">
         <rdfs:domain rdf:resource="http://www.intactile.com/ontologies/2015/7/myST_Ontology#Trajectory"/>
         <rdfs:range rdf:resource="http://www.intactile.com/ontologies/2015/7/myS_Ontology#MovingObject"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.intactile.com/ontologies/2015/7/myST_Ontology#isLinkedTo -->
+
+    <ObjectProperty rdf:about="http://www.intactile.com/ontologies/2015/7/myST_Ontology#isLinkedTo">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.intactile.com/ontologies/2015/7/myST_Ontology#SpatioTemporalObject"/>
+        <rdfs:range rdf:resource="http://www.opengis.net/ont/geosparql#Feature"/>
+    </ObjectProperty>
+    
+
+
+    <!-- http://www.intactile.com/ontologies/2015/7/myST_Ontology#isLinkedToGeometry -->
+
+    <ObjectProperty rdf:about="http://www.intactile.com/ontologies/2015/7/myST_Ontology#isLinkedToGeometry">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.intactile.com/ontologies/2015/7/myST_Ontology#SpaceTimePoint"/>
+        <rdfs:range rdf:resource="http://www.opengis.net/ont/geosparql#Geometry"/>
     </ObjectProperty>
     
 

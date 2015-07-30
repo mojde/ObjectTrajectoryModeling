@@ -1,8 +1,13 @@
 package com.intactile.datamodel;
 
+/**
+ * 
+ * @author Mojdeh
+ */
 public enum IntModelConcepts {
 	
 	    Unknown,
+	    SpatioTemporalObject,
 	    SpaceTimePoint,
 	    SpaceTimeSegment,
 	    Trajectory,

@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 
+ * @author Mojdeh
+ */
 public class IntDataParser {
 
 	String path;
@@ -19,34 +23,34 @@ public class IntDataParser {
 		this.deliminator = deliminator;
 	}
 
-	public List<ObjectMobile> parse() {
+	public List<MovingObject> parse() {
 
-		List<ObjectMobile> lst = new LinkedList<>();
+		List<MovingObject> lst = new LinkedList<>();
 		BufferedReader br = null;
 
 		try {
 			String sCurrentLine;
 			br = new BufferedReader(new FileReader(path));
 			String[] strs = null;
-			ObjectMobile item = new ObjectMobile();
+			MovingObject movingObject = new MovingObject();
 			while ((sCurrentLine = br.readLine()) != null) {
 				strs = sCurrentLine.split(deliminator);
-				ObjectPoints point = new ObjectPoints();
+				SpaceTimePoint point = new SpaceTimePoint();
 				if (strs.length <= 4) {
-					item.objectId = strs[0];
-					item.objectName = strs[1];
-					item.activity = strs[2];
-					item.description = strs[3];
-					lst.add(item);
+					movingObject.mObjId = strs[0];
+					movingObject.mObjName = strs[1];
+					movingObject.mObjActivity = strs[2];
+					movingObject.mObjDescription = strs[3];
+					lst.add(movingObject);
 				} else if (strs.length > 4) {
-					point.pointId = strs[0];
+					point.stObjId = strs[0];
 					point.pointLatitude = strs[1];
 					point.pointLongitude = strs[2];
 					point.pointAltitude = strs[3];
 					point.pointDirection = strs[4];
 					point.pointSpeed = strs[5];
 					point.pointTime = strs[6];
-					item.points.add(point);
+					movingObject.objectTrajectory.trajectoryPoints.add(point);
 				}
 				for (int i = 0; i < strs.length; i++) {
 					System.err.print(strs[i] + " - ");
@@ -64,7 +68,7 @@ public class IntDataParser {
 				ex.printStackTrace();
 			}
 		}
-		System.out.println("ListItem:" + lst);
+		System.out.println("List of Objects:" + lst);
 		return lst;
 	}
 }
